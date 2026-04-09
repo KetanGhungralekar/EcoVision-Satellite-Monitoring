@@ -1,0 +1,50 @@
+# ==============================
+# Python / Backend
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+.pytest_cache/
+
+# ==============================
+# Node / Frontend (React + Vite)
+# ==============================
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================
+# Large ML Models & Datasets
+# ==============================
+# Note: GitHub blocks pushes over 100MB by default without Git LFS. 
+# It is highly recommended to ignore the datasets and large model weight files.
+*.h5
+*.hdf5
+*.pkl
+DataSet/
+saved_model/
+
+# ==============================
+# System Files
+# ==============================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==============================
+# IDE / Editor Files
+# ==============================
+.vscode/
+.idea/
+*.sublime-workspace
