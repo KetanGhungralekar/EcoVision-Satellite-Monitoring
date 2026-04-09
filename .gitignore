@@ -27,9 +27,24 @@ yarn-error.log*
 # It is highly recommended to ignore the datasets and large model weight files.
 *.h5
 *.hdf5
+*.pth
+*.pt
 *.pkl
 DataSet/
 saved_model/
+weights/
+hls_data/
+Water_Body_Segmentation/
+prithvi-pytorch/
+
+# ==============================
+# Satellite Data & Temp Files
+# ==============================
+*.tif
+*.tiff
+*.ipynb_checkpoints/
+lightning_logs/
+
 
 # ==============================
 # System Files
