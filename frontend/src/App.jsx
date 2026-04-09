@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { Flame, Droplets, Map, Trees, UploadCloud, Loader2, AlertCircle } from 'lucide-react'
 import axios from 'axios'
 import './index.css'
+import Login from './Login'
 
 function App() {
   const [activeTab, setActiveTab] = useState('wildfire')
@@ -10,6 +11,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const fileInputRef = useRef(null)
 
@@ -80,6 +82,10 @@ function App() {
     : preview
 
   const hasMask = result?.mask_base64
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />
+  }
 
   return (
     <div className="app-container">
