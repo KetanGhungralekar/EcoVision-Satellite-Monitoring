@@ -35,6 +35,8 @@ saved_model/
 weights/
 hls_data/
 Water_Body_Segmentation/
+Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/
+Wildfire-Prediction-from-Satellite-Imagery/
 prithvi-pytorch/
 
 # ==============================

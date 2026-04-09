@@ -180,6 +180,31 @@ async def predict_burnscar(file: UploadFile = File(...)):
             os.remove(temp_path)
 
 
+# ── Deforestation endpoint (U-Net) ───────────────────────────────────────────
+@app.post("/api/predict/deforestation")
+async def predict_deforestation(file: UploadFile = File(...)):
+    """
+    Accepts an RGB image (PNG/JPEG).
+    Returns:
+      - mask_base64 : color-coded overlay PNG (Green=Forest, Red=Deforest)
+    """
+    try:
+        from deforestation_inference import deforestation_predictor
+        
+        contents = await file.read()
+        mask_b64 = deforestation_predictor.predict(contents)
+
+        return JSONResponse(content={
+            "prediction_text": "Deforestation Segmentation Generated",
+            "mask_base64": mask_b64
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
 # ── Health check ───────────────────────────────────────────────────────────────
 @app.get("/api/health")
 async def health_check():

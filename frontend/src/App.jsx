@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Flame, Droplets, Map, UploadCloud, Loader2, AlertCircle } from 'lucide-react'
+import { Flame, Droplets, Map, Trees, UploadCloud, Loader2, AlertCircle } from 'lucide-react'
 import axios from 'axios'
 import './index.css'
 
@@ -17,6 +17,7 @@ function App() {
     { id: 'wildfire',  name: 'Wildfire Prediction',       icon: Flame,    accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'waterbody', name: 'Water Body Segmentation',   icon: Droplets, accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'burnscar',  name: 'Burned Area Segmentation',  icon: Map,      accept: '.tif,.tiff', hint: 'GeoTIFF (.tif)' },
+    { id: 'deforestation', name: 'Deforestation Detection', icon: Trees, accept: 'image/*', hint: 'JPG, PNG' },
   ]
 
   const activeTabInfo = tabs.find(t => t.id === activeTab)
@@ -178,9 +179,11 @@ function App() {
                     <div style={{ flex: '1', minWidth: '250px' }}>
                       <h4 style={{
                         marginBottom: '0.5rem', textAlign: 'center',
-                        color: activeTab === 'burnscar' ? '#ff9f43' : '#4dabf7'
+                        color: activeTab === 'burnscar' ? '#ff9f43' : (activeTab === 'deforestation' ? '#40c057' : '#4dabf7')
                       }}>
-                        {activeTab === 'burnscar' ? 'Burn Scar Mask' : 'Segmentation Mask'}
+                        {activeTab === 'burnscar' 
+                          ? 'Burn Scar Mask' 
+                          : activeTab === 'deforestation' ? 'Deforestation Mask' : 'Segmentation Mask'}
                       </h4>
                       <div style={{ position: 'relative', width: '100%' }}>
                         {originalSrc
@@ -218,7 +221,8 @@ function App() {
                   disabled={loading}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    background: activeTab === 'burnscar' ? 'linear-gradient(135deg, #ff9f43, #e55039)' : undefined
+                    background: activeTab === 'burnscar' ? 'linear-gradient(135deg, #ff9f43, #e55039)' 
+                              : (activeTab === 'deforestation' ? 'linear-gradient(135deg, #40c057, #2b8a3e)' : undefined)
                   }}
                 >
                   {loading
@@ -292,6 +296,22 @@ function App() {
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4' }}>
                 The <strong style={{ color: '#ff9f43' }}>Prithvi-100M foundation model</strong> analysed the 6-band Sentinel-2 GeoTIFF.
                 Pixels highlighted in <strong style={{ color: '#ff9f43' }}>orange</strong> are classified as burned / post-fire scar areas.
+              </p>
+            </div>
+          )}
+
+          {result && activeTab === 'deforestation' && (
+            <div className="result-container">
+              <h3 className="result-title" style={{ color: '#40c057' }}>
+                {result.prediction_text}
+              </h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4' }}>
+                The <strong style={{ color: '#40c057' }}>U-Net segmentation model</strong> has highlighted areas of forest cover and deforestation.
+                <br />
+                <span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#40c057', borderRadius: '2px', marginRight: '6px' }}></span>
+                <strong style={{ color: '#40c057' }}>Green</strong>: Forest &nbsp;
+                <span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#ff6b6b', borderRadius: '2px', marginRight: '6px', marginLeft: '12px' }}></span>
+                <strong style={{ color: '#ff6b6b' }}>Red</strong>: Deforested area
               </p>
             </div>
           )}
