@@ -71,3 +71,5 @@ Thumbs.db
 .vscode/
 .idea/
 *.sublime-workspace
+
+Wildfire Spread Prediction/test_dataset/

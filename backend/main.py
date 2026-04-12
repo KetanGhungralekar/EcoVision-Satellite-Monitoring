@@ -6,6 +6,7 @@ import base64
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import tensorflow as tf
 from tensorflow.keras.models import load_model
@@ -199,6 +200,45 @@ async def predict_deforestation(file: UploadFile = File(...)):
             "mask_base64": mask_b64
         })
 
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+# ── Wildfire Spread endpoint (TFRecord + PyTorch GNN) ──────────────────────────
+@app.post("/api/predict/wildfire-spread")
+async def predict_wildfire_spread(file: UploadFile = File(...)):
+    """
+    Accepts a .tfrecord or .npy file for next-day wildfire spread.
+    Returns 5 base64 encoded pngs.
+    """
+    try:
+        from wildfire_spread_inference import WildfireSpreadPredictor
+        
+        # Initialize the predictor using the saved model path
+        model_path = os.path.join(
+            os.path.dirname(__file__), "..",
+            "Wildfire Spread Prediction", "model", "best_model.pth"
+        )
+        predictor = WildfireSpreadPredictor(model_path)
+        
+        # Preserve extension so the predictor can auto-detect the format
+        ext = os.path.splitext(file.filename)[1].lower()
+        temp_path = f"wildfire_spread_upload{ext}"
+            
+        contents = await file.read()
+        with open(temp_path, "wb") as f:
+            f.write(contents)
+            
+        result = predictor.predict(temp_path)
+        
+        # Clean up
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+            
+        return JSONResponse(content=result)
+        
     except Exception as e:
         import traceback
         traceback.print_exc()

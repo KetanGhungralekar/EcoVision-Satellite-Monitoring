@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Flame, Droplets, Map, Trees, UploadCloud, Loader2, AlertCircle } from 'lucide-react'
+import { Flame, Droplets, Map, Trees, UploadCloud, Loader2, AlertCircle, Activity } from 'lucide-react'
 import axios from 'axios'
 import './index.css'
 import Login from './Login'
@@ -20,6 +20,7 @@ function App() {
     { id: 'waterbody', name: 'Water Body Segmentation',   icon: Droplets, accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'burnscar',  name: 'Burned Area Segmentation',  icon: Map,      accept: '.tif,.tiff', hint: 'GeoTIFF (.tif)' },
     { id: 'deforestation', name: 'Deforestation Detection', icon: Trees, accept: 'image/*', hint: 'JPG, PNG' },
+    { id: 'wildfire-spread', name: 'Wildfire Spread Prediction', icon: Activity, accept: '.tfrecord,.npy', hint: 'TFRecord (.tfrecord) or NumPy (.npy)' },
   ]
 
   const activeTabInfo = tabs.find(t => t.id === activeTab)
@@ -37,8 +38,8 @@ function App() {
 
   const handleFile = (selectedFile) => {
     setFile(selectedFile)
-    // GeoTIFFs can't be previewed by the browser — we'll get rgb_base64 from backend
-    if (activeTab === 'burnscar') {
+    // GeoTIFFs and TFRecords can't be previewed by the browser
+    if (activeTab === 'burnscar' || activeTab === 'wildfire-spread') {
       setPreview(null)
     } else {
       setPreview(URL.createObjectURL(selectedFile))
@@ -138,6 +139,11 @@ function App() {
                   Requires a 6-band Sentinel-2 / HLS GeoTIFF (B02–B07)
                 </p>
               )}
+              {activeTab === 'wildfire-spread' && (
+                <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', opacity: 0.7 }}>
+                  Requires a .tfrecord file with wildfire data
+                </p>
+              )}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -164,7 +170,7 @@ function App() {
                       <Map size={40} style={{ marginBottom: '0.5rem', opacity: 0.8 }} />
                       <p style={{ margin: 0, fontWeight: 600 }}>{file.name}</p>
                       <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        GeoTIFF ready · click <strong>Run Prediction</strong> to process
+                        {activeTab === 'wildfire-spread' ? 'TFRecord ready' : 'GeoTIFF ready'} · click <strong>Run Prediction</strong> to process
                       </p>
                     </div>
                   )}
@@ -207,7 +213,9 @@ function App() {
                 ) : (
                   /* Wildfire result — no mask, just show the image */
                   <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                    <img src={originalSrc || preview} alt="Preview" className="preview-image" />
+                    {activeTab !== 'wildfire-spread' && (
+                      <img src={originalSrc || preview} alt="Preview" className="preview-image" />
+                    )}
                   </div>
                 )
               )}
@@ -228,7 +236,8 @@ function App() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.5rem',
                     background: activeTab === 'burnscar' ? 'linear-gradient(135deg, #ff9f43, #e55039)' 
-                              : (activeTab === 'deforestation' ? 'linear-gradient(135deg, #40c057, #2b8a3e)' : undefined)
+                              : (activeTab === 'deforestation' ? 'linear-gradient(135deg, #40c057, #2b8a3e)' 
+                              : (activeTab === 'wildfire-spread' ? 'linear-gradient(135deg, #f03e3e, #d6336c)' : undefined))
                   }}
                 >
                   {loading
@@ -249,6 +258,44 @@ function App() {
           )}
 
           {/* ── Result panels ──────────────────────────────────── */}
+          {result && activeTab === 'wildfire-spread' && (
+            <div className="result-container">
+              <h3 className="result-title" style={{ color: '#ff6b6b' }}>
+                {result.prediction_text}
+              </h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4', marginBottom: '1.5rem' }}>
+                The <strong style={{ color: '#ff6b6b' }}>HybridResGNN-UNet model</strong> processed the input.
+                Results are displayed below (Threshold = {(result.threshold || 0.45).toFixed(2)}).
+              </p>
+              
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(4, 1fr)', 
+                gap: '1rem', 
+                width: '100%',
+                background: 'rgba(255,255,255,0.02)',
+                padding: '1rem',
+                borderRadius: '8px'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Input Fire</h4>
+                  <img src={`data:image/png;base64,${result.prev_day_base64}`} alt="Input" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Ground Truth</h4>
+                  <img src={`data:image/png;base64,${result.ground_truth_base64}`} alt="Ground Truth" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Pred (AUPRC={(result.auprc || 0).toFixed(3)})</h4>
+                  <img src={`data:image/png;base64,${result.probability_map_base64}`} alt="Prediction" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Error Map</h4>
+                  <img src={`data:image/png;base64,${result.error_map_base64}`} alt="Error Map" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                </div>
+              </div>
+            </div>
+          )}
 
           {result && activeTab === 'wildfire' && (
             <div className="result-container">
