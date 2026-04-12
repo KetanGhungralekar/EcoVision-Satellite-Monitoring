@@ -35,9 +35,10 @@ saved_model/
 weights/
 hls_data/
 Water_Body_Segmentation/
+# Deforestation Detection project (Data & Models ignored)
 Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/Dataset/
-Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/data_shaffled_8_04_2021/
 Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/Images/
+Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/data_shaffled_8_04_2021/
 Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/deforestation/
 Satellite-Image-Segmentation-using-Deep-Learning-for-Deforestation-Detection/Pretrained_Model/
 
