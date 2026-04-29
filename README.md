@@ -21,7 +21,7 @@ EcoVision provides four major analytical tools optimized for environmental monit
 - **Wildfire Prediction**  
   Analyzes standard satellite imagery (JPG/PNG) to predict the likelihood of active wildfire occurrences accurately.
   
--**Water Body Segmentation**  
+- **Water Body Segmentation**  
   Automated semantic segmentation designed to map, track, and monitor vital water resources and shifting boundaries.
 
 - **Burned Area (Burn Scar) Segmentation**  
