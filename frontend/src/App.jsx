@@ -2,8 +2,6 @@ import { useState, useRef } from 'react'
 import { Flame, Droplets, Map, Trees, UploadCloud, Loader2, AlertCircle, Activity } from 'lucide-react'
 import axios from 'axios'
 import './index.css'
-import Login from './Login'
-
 function App() {
   const [activeTab, setActiveTab] = useState('wildfire')
   const [file, setFile] = useState(null)
@@ -11,13 +9,10 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
   const fileInputRef = useRef(null)
 
   const tabs = [
     { id: 'wildfire',  name: 'Wildfire Prediction',       icon: Flame,    accept: 'image/*', hint: 'JPG, PNG' },
-    { id: 'waterbody', name: 'Water Body Segmentation',   icon: Droplets, accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'burnscar',  name: 'Burned Area Segmentation',  icon: Map,      accept: '.tif,.tiff', hint: 'GeoTIFF (.tif)' },
     { id: 'deforestation', name: 'Deforestation Detection', icon: Trees, accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'wildfire-spread', name: 'Wildfire Spread Prediction', icon: Activity, accept: '.tfrecord,.npy', hint: 'TFRecord (.tfrecord) or NumPy (.npy)' },
@@ -83,10 +78,6 @@ function App() {
     : preview
 
   const hasMask = result?.mask_base64
-
-  if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />
-  }
 
   return (
     <div className="app-container">
@@ -327,17 +318,6 @@ function App() {
                   <div className="prob-bar-fill fill-nowildfire" style={{ width: `${result.no_wildfire_prob * 100}%` }} />
                 </div>
               </div>
-            </div>
-          )}
-
-          {result && activeTab === 'waterbody' && (
-            <div className="result-container">
-              <h3 className="result-title" style={{ color: '#4dabf7' }}>
-                Prediction: {result.prediction}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4' }}>
-                The model has segmented the satellite image and highlighted detected water bodies.
-              </p>
             </div>
           )}
 

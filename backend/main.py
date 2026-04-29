@@ -28,17 +28,11 @@ WILDFIRE_MODEL_PATH = os.path.join(
     "Wildfire-Prediction-from-Satellite-Imagery",
     "saved_model", "custom_best_model.h5"
 )
-WATERBODY_MODEL_PATH = os.path.join(
-    os.path.dirname(__file__), "..",
-    "Water_Body_Segmentation", "image_segmentation_model_UNet.h5"
-)
-
 wildfire_model = None
-waterbody_model = None
 
 @app.on_event("startup")
 async def startup_event():
-    global wildfire_model, waterbody_model
+    global wildfire_model
 
     if os.path.exists(WILDFIRE_MODEL_PATH):
         print(f"Loading Wildfire model…")
@@ -47,23 +41,12 @@ async def startup_event():
     else:
         print(f"WARNING: Wildfire model not found at {WILDFIRE_MODEL_PATH}")
 
-    if os.path.exists(WATERBODY_MODEL_PATH):
-        print(f"Loading Water Body model…")
-        waterbody_model = load_model(WATERBODY_MODEL_PATH)
-        print("Water Body model loaded.")
-    else:
-        print(f"WARNING: Water Body model not found at {WATERBODY_MODEL_PATH}")
-
 
 # ── Schemas ────────────────────────────────────────────────────────────────────
 class PredictionResponse(BaseModel):
     no_wildfire_prob: float
     wildfire_prob: float
     prediction: str
-
-class WaterBodyResponse(BaseModel):
-    prediction: str
-    mask_base64: str
 
 CLASS_MAP = {0: "Nowildfire", 1: "Wildfire"}
 
@@ -95,42 +78,6 @@ async def predict_wildfire(file: UploadFile = File(...)):
             no_wildfire_prob=no_wildfire_prob,
             wildfire_prob=wildfire_prob,
             prediction=prediction_label
-        )
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# ── Water Body endpoint (unchanged) ───────────────────────────────────────────
-@app.post("/api/predict/waterbody", response_model=WaterBodyResponse)
-async def predict_waterbody(file: UploadFile = File(...)):
-    if not waterbody_model:
-        raise HTTPException(status_code=500, detail="Water Body model not loaded.")
-
-    try:
-        contents = await file.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        if img is None:
-            raise HTTPException(status_code=400, detail="Invalid image file.")
-
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (256, 256))
-        img_batch = np.expand_dims(img, axis=0)
-
-        prediction = waterbody_model.predict(img_batch)[0]
-        mask = np.where(prediction > 0.5, 1, 0).astype(np.uint8)
-
-        mask_rgba = np.zeros((256, 256, 4), dtype=np.uint8)
-        mask_rgba[mask[:, :, 0] == 1] = [255, 255, 0, 130]
-
-        _, buffer = cv2.imencode('.png', mask_rgba)
-        mask_base64 = base64.b64encode(buffer).decode('utf-8')
-
-        return WaterBodyResponse(
-            prediction="Water Body Segmentation Generated",
-            mask_base64=mask_base64
         )
 
     except Exception as e:
@@ -251,6 +198,5 @@ async def health_check():
     return {
         "status": "ok",
         "wildfire_model_loaded":  wildfire_model is not None,
-        "waterbody_model_loaded": waterbody_model is not None,
         "burnscar_model":         "lazy-loaded on first request (PyTorch / Prithvi)",
     }
