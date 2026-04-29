@@ -14,33 +14,33 @@
 
 <hr/>
 
-## ✨ Key Features
+## Key Features
 
 EcoVision provides four major analytical tools optimized for environmental monitoring:
 
-- 🔥 **Wildfire Prediction**  
+- **Wildfire Prediction**  
   Analyzes standard satellite imagery (JPG/PNG) to predict the likelihood of active wildfire occurrences accurately.
   
-- 💧 **Water Body Segmentation**  
+-**Water Body Segmentation**  
   Automated semantic segmentation designed to map, track, and monitor vital water resources and shifting boundaries.
 
-- 🗺️ **Burned Area (Burn Scar) Segmentation**  
+- **Burned Area (Burn Scar) Segmentation**  
   Utilizes the **Prithvi-100M foundation model** on 6-band Sentinel-2 / HLS GeoTIFFs to precisely map post-fire damage areas and outline burn scars dynamically.
 
-- 🌲 **Deforestation Detection**  
+- **Deforestation Detection**  
   Leverages cutting-edge **U-Net** models to consistently detect forest land-cover transitions and expose instances of unauthorized logging.
 
-## 💻 Stunning UI/UX
+## UI/UX
 
-A completely overhauled, highly immersive dashboard with **Glassmorphism**, smooth micro-animations, dynamic gradients, and real-time inference displays. Experience planetary monitoring in style!
+An immersive dashboard with **Glassmorphism**, smooth micro-animations, dynamic gradients, and real-time inference displays. Experience planetary monitoring in style!
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend:** React 19, Vite, Vanilla CSS, Lucide Icons.
 - **Backend:** Python, FastAPI.
 - **Machine Learning Models:** Custom Convolutional Neural Networks (CNNs), U-Net Architectures, and IBM/NASA's Prithvi-100M Foundation Model.
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to get the project running locally.
 
@@ -54,13 +54,6 @@ cd EcoVision-Satellite-Monitoring
 The Python backend manages the ML inference and model loading.
 ```bash
 cd backend
-# Optional: It is recommended to create a virtual environment
-# python -m venv venv
-# source venv/bin/activate (or venv\Scripts\activate on Windows)
-
-# Ensure dependencies are installed (e.g. fastapi, uvicorn, torch, etc.)
-# pip install -r requirements.txt 
-
 uvicorn main:app --reload
 ```
 *The backend server will become available at `http://localhost:8000`*
@@ -73,7 +66,7 @@ npm run dev
 ```
 *The interactive dashboard will boot up at `http://localhost:5173`*
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 EcoVision-Satellite-Monitoring/
