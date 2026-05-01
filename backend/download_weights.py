@@ -9,6 +9,7 @@ print("Files in repo:", files)
 cfg_file = next((f for f in files if f.endswith('.yaml')), None)
 ckpt_file = next((f for f in files if f.endswith('.pt') or f.endswith('.pth') or f.endswith('.bin')), None)
 
+#printing debugging stats
 print(f"Config: {cfg_file}, Ckpt: {ckpt_file}")
 
 if cfg_file and ckpt_file:
