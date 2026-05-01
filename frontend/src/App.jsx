@@ -107,7 +107,7 @@ function App() {
 
       {/* ── Main ─────────────────────────────────────────────────── */}
       <div className="main-content">
-        <div className="upload-card">
+        <div className={`upload-card ${(activeTab === 'wildfire-spread' && result) ? 'wide' : ''}`}>
 
           {/* Dropzone — shown when no file selected */}
           {!file ? (
@@ -248,41 +248,70 @@ function App() {
             </div>
           )}
 
-          {/* ── Result panels ──────────────────────────────────── */}
+          {/* ── Wildfire Spread Result Grid ─────────────────────── */}
           {result && activeTab === 'wildfire-spread' && (
             <div className="result-container">
               <h3 className="result-title" style={{ color: '#ff6b6b' }}>
+                <Activity size={22} style={{ verticalAlign: 'middle', marginRight: '0.5rem' }} />
                 {result.prediction_text}
               </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4', marginBottom: '1.5rem' }}>
-                The <strong style={{ color: '#ff6b6b' }}>HybridResGNN-UNet model</strong> processed the input.
-                Results are displayed below (Threshold = {(result.threshold || 0.45).toFixed(2)}).
-              </p>
-              
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(4, 1fr)', 
-                gap: '1rem', 
-                width: '100%',
-                background: 'rgba(255,255,255,0.02)',
-                padding: '1rem',
-                borderRadius: '8px'
-              }}>
-                <div style={{ textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Input Fire</h4>
-                  <img src={`data:image/png;base64,${result.prev_day_base64}`} alt="Input" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+
+              {/* Stat chips */}
+              <div className="spread-stats-bar">
+                <div className="stat-chip">
+                  <span>Model</span>
+                  <span className="stat-value" style={{ color: '#ff6b6b' }}>HybridResGNN-UNet</span>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Ground Truth</h4>
-                  <img src={`data:image/png;base64,${result.ground_truth_base64}`} alt="Ground Truth" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                <div className="stat-chip">
+                  <span>Threshold</span>
+                  <span className="stat-value" style={{ color: '#ffa94d' }}>{(result.threshold || 0.45).toFixed(2)}</span>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Pred (AUPRC={(result.auprc || 0).toFixed(3)})</h4>
-                  <img src={`data:image/png;base64,${result.probability_map_base64}`} alt="Prediction" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                <div className="stat-chip">
+                  <span>AUPRC</span>
+                  <span className="stat-value" style={{ color: '#51cf66' }}>{(result.auprc || 0).toFixed(4)}</span>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '0.75rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>Error Map</h4>
-                  <img src={`data:image/png;base64,${result.error_map_base64}`} alt="Error Map" style={{ width: '100%', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }} />
+              </div>
+
+              {/* Top row: 3 columns */}
+              <div className="spread-grid">
+                <div className="spread-grid-cell">
+                  <div className="cell-label">
+                    <span className="cell-dot" style={{ background: '#ffa94d' }} />
+                    Input: Previous Day Fire
+                  </div>
+                  <img src={`data:image/png;base64,${result.prev_day_base64}`} alt="Previous Day Fire" />
+                </div>
+                <div className="spread-grid-cell">
+                  <div className="cell-label">
+                    <span className="cell-dot" style={{ background: '#51cf66' }} />
+                    Ground Truth: Next Day
+                  </div>
+                  <img src={`data:image/png;base64,${result.ground_truth_base64}`} alt="Ground Truth" />
+                </div>
+                <div className="spread-grid-cell">
+                  <div className="cell-label">
+                    <span className="cell-dot" style={{ background: '#ff6b6b' }} />
+                    Predicted: Next Day
+                  </div>
+                  <img src={`data:image/png;base64,${result.pred_next_day_base64}`} alt="Predicted" />
+                </div>
+              </div>
+
+              {/* Bottom row: 2 columns */}
+              <div className="spread-bottom-row">
+                <div className="spread-grid-cell">
+                  <div className="cell-label">
+                    <span className="cell-dot" style={{ background: '#4dabf7' }} />
+                    GNN Probability Heatmap
+                  </div>
+                  <img src={`data:image/png;base64,${result.probability_map_base64}`} alt="Probability Map" />
+                </div>
+                <div className="spread-grid-cell">
+                  <div className="cell-label">
+                    <span className="cell-dot" style={{ background: '#e599f7' }} />
+                    Error Map
+                  </div>
+                  <img src={`data:image/png;base64,${result.error_map_base64}`} alt="Error Map" />
                 </div>
               </div>
             </div>

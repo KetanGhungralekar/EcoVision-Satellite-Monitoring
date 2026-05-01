@@ -13,9 +13,18 @@ from wildfire_spread_inference import WildfireSpreadPredictor
 
 def evaluate_all_samples():
     print("Initializing predictor...")
-    model_path = os.path.join(
-        os.path.dirname(__file__), "..",
-        "Wildfire Spread Prediction", "model", "best_model.pth"
+    from huggingface_hub import hf_hub_download
+    from hf_router.core import TokenManager
+    import os
+    
+    token_mgr = TokenManager(tokens_file=os.path.join(os.path.dirname(__file__), "tokens.json"))
+    repo_id = "PrathamChawdhry/EcoVision-Wildfire-Spread"
+    token = token_mgr.get_token_for_repo(repo_id)
+
+    model_path = hf_hub_download(
+        repo_id=repo_id,
+        filename="best_model.pth",
+        token=token
     )
     predictor = WildfireSpreadPredictor(model_path)
     
