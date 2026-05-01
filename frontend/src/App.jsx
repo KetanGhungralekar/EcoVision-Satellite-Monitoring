@@ -14,7 +14,6 @@ function App() {
   const tabs = [
     { id: 'wildfire',  name: 'Wildfire Prediction',       icon: Flame,    accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'burnscar',  name: 'Burned Area Segmentation',  icon: Map,      accept: '.tif,.tiff', hint: 'GeoTIFF (.tif)' },
-    { id: 'deforestation', name: 'Deforestation Detection', icon: Trees, accept: 'image/*', hint: 'JPG, PNG' },
     { id: 'wildfire-spread', name: 'Wildfire Spread Prediction', icon: Activity, accept: '.tfrecord,.npy', hint: 'TFRecord (.tfrecord) or NumPy (.npy)' },
   ]
 
@@ -182,11 +181,11 @@ function App() {
                     <div style={{ flex: '1', minWidth: '250px' }}>
                       <h4 style={{
                         marginBottom: '0.5rem', textAlign: 'center',
-                        color: activeTab === 'burnscar' ? '#ff9f43' : (activeTab === 'deforestation' ? '#40c057' : '#4dabf7')
+                        color: activeTab === 'burnscar' ? '#ff9f43' : '#4dabf7'
                       }}>
                         {activeTab === 'burnscar' 
                           ? 'Burn Scar Mask' 
-                          : activeTab === 'deforestation' ? 'Deforestation Mask' : 'Segmentation Mask'}
+                          : 'Segmentation Mask'}
                       </h4>
                       <div style={{ position: 'relative', width: '100%' }}>
                         {originalSrc
@@ -227,8 +226,7 @@ function App() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.5rem',
                     background: activeTab === 'burnscar' ? 'linear-gradient(135deg, #ff9f43, #e55039)' 
-                              : (activeTab === 'deforestation' ? 'linear-gradient(135deg, #40c057, #2b8a3e)' 
-                              : (activeTab === 'wildfire-spread' ? 'linear-gradient(135deg, #f03e3e, #d6336c)' : undefined))
+                              : (activeTab === 'wildfire-spread' ? 'linear-gradient(135deg, #f03e3e, #d6336c)' : undefined)
                   }}
                 >
                   {loading
@@ -320,18 +318,18 @@ function App() {
           {result && activeTab === 'wildfire' && (
             <div className="result-container">
               <h3 className="result-title" style={{ color: result.prediction === 'Wildfire' ? '#ff6b6b' : '#4dabf7' }}>
-                Prediction: {result.prediction}
+                Wildfire Risk Assessment
               </h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '1.5rem', lineHeight: '1.4' }}>
-                The model predicts that the area in the given satellite image{' '}
+                Based on the satellite image, the model evaluates a{' '}
                 <strong style={{ color: result.prediction === 'Wildfire' ? '#ff6b6b' : '#4dabf7' }}>
-                  has {result.prediction === 'No Wildfire' ? 'not ' : ''}been affected
+                  {result.prediction === 'Wildfire' ? 'High Risk' : 'Low Risk'}
                 </strong>{' '}
-                by a wildfire.
+                of wildfire conditions for this area.
               </p>
               <div className="prob-bar-container">
                 <div className="prob-label">
-                  <span>Wildfire Probability</span>
+                  <span>High Risk Probability</span>
                   <span>{(result.wildfire_prob * 100).toFixed(1)}%</span>
                 </div>
                 <div className="prob-bar-bg">
@@ -340,7 +338,7 @@ function App() {
               </div>
               <div className="prob-bar-container">
                 <div className="prob-label">
-                  <span>No Wildfire Probability</span>
+                  <span>Low Risk Probability</span>
                   <span>{(result.no_wildfire_prob * 100).toFixed(1)}%</span>
                 </div>
                 <div className="prob-bar-bg">
@@ -362,21 +360,7 @@ function App() {
             </div>
           )}
 
-          {result && activeTab === 'deforestation' && (
-            <div className="result-container">
-              <h3 className="result-title" style={{ color: '#40c057' }}>
-                {result.prediction_text}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.4' }}>
-                The <strong style={{ color: '#40c057' }}>U-Net segmentation model</strong> has highlighted areas of forest cover and deforestation.
-                <br />
-                <span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#40c057', borderRadius: '2px', marginRight: '6px' }}></span>
-                <strong style={{ color: '#40c057' }}>Green</strong>: Forest &nbsp;
-                <span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#ff6b6b', borderRadius: '2px', marginRight: '6px', marginLeft: '12px' }}></span>
-                <strong style={{ color: '#ff6b6b' }}>Red</strong>: Deforested area
-              </p>
-            </div>
-          )}
+
         </div>
       </div>
 
