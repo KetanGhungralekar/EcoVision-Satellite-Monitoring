@@ -16,82 +16,71 @@
 
 ## Key Features
 
-EcoVision provides four major analytical tools optimized for environmental monitoring:
+EcoVision AI is currently specialized in a high-precision **Three-Stage Wildfire Analysis Pipeline** and aquatic monitoring:
 
-- **Wildfire Prediction**  
-  Analyzes standard satellite imagery (JPG/PNG) to predict the likelihood of active wildfire occurrences accurately.
-  
+### 🔥 The Three-Stage Wildfire Pipeline
+1.  **Wildfire Risk Prediction (Risk Assessment)**  
+    Analyzes standard satellite imagery (JPG/PNG) using VGG-16 and Custom CNNs to evaluate the immediate risk of wildfire occurrence with ~95% accuracy.
+    
+2.  **Wildfire Spread Prediction (Dynamic Modeling)**  
+    Uses a **Hybrid ResGNN-UNet** model that combines spatial image learning with environmental data (weather, terrain, vegetation) to predict the dynamic growth and direction of active fires.
+    
+3.  **Burned Area (Burn Scar) Segmentation**  
+    Utilizes the **Prithvi-100M Foundation Model** on 6-band Sentinel-2 / HLS GeoTIFFs to precisely map post-fire damage areas and outline burn scars for recovery analysis.
+
+### 💧 Aquatic Monitoring
 - **Water Body Segmentation**  
   Automated semantic segmentation designed to map, track, and monitor vital water resources and shifting boundaries.
-
-- **Burned Area (Burn Scar) Segmentation**  
-  Utilizes the **Prithvi-100M foundation model** on 6-band Sentinel-2 / HLS GeoTIFFs to precisely map post-fire damage areas and outline burn scars dynamically.
-
-- **Deforestation Detection**  
-  Leverages cutting-edge **U-Net** models to consistently detect forest land-cover transitions and expose instances of unauthorized logging.
-
-## UI/UX
-
-An immersive dashboard with **Glassmorphism**, smooth micro-animations, dynamic gradients, and real-time inference displays. Experience planetary monitoring in style!
 
 ## Tech Stack
 
 - **Frontend:** React 19, Vite, Vanilla CSS, Lucide Icons.
-- **Backend:** Python, FastAPI.
-- **Machine Learning Models:** Custom Convolutional Neural Networks (CNNs), U-Net Architectures, and IBM/NASA's Prithvi-100M Foundation Model.
+- **Backend:** Python, FastAPI, PyTorch, TensorFlow.
+- **AI Models:** 
+    - **Prithvi-100M:** NASA/IBM Geospatial Foundation Model.
+    - **Hybrid ResGNN-UNet:** Graph-based spatial-temporal modeling.
+    - **VGG-16 / Custom CNN:** Deep learning for risk classification.
 
 ## Getting Started
 
-Follow these steps to get the project running locally.
-
-### 1. Clone the repository
+### 1. Clone and Setup
 ```bash
 git clone https://github.com/KetanGhungralekar/EcoVision-Satellite-Monitoring.git
 cd EcoVision-Satellite-Monitoring
 ```
 
-### 2. Run the Backend (FastAPI)
-The Python backend manages the ML inference and model loading.
+### 2. Configure Backend
+Create a `backend/.env` file and add your Hugging Face token to access gated models:
+```env
+HF_TOKEN_MODEL_3=your_token_here
+```
+Install dependencies and run the server:
 ```bash
 cd backend
-uvicorn main:app --reload
+# Recommended: create and activate a venv first
+./venv/bin/python3 -m uvicorn main:app --reload
 ```
-*The backend server will become available at `http://localhost:8000`*
 
-### 3. Run the Frontend (React + Vite)
+### 3. Run Frontend
 ```bash
 cd ../frontend
 npm install
 npm run dev
 ```
-*The interactive dashboard will boot up at `http://localhost:5173`*
 
 ## Project Structure
 
 ```
 EcoVision-Satellite-Monitoring/
-├── backend/                                   # FastAPI server and Model Inference scripts
-│   ├── main.py                                # System API Entry point
-│   ├── prithvi_inference.py                   # Prithvi geospatial logic
-│   └── deforestation_inference.py             # U-Net image segmentation
-├── frontend/                                  # React 19 Client application
-│   ├── src/
-│   │   ├── App.jsx                            # Analytics Dashboard Wrapper
-│   │   ├── Login.jsx                          # Glassmorphism entrance portal
-│   │   └── index.css                          # Application styling
-├── Water_Body_Segmentation/                   # Raw models and Jupyter notebooks
-└── Wildfire-Prediction-from-Satellite-Imagery/# Raw models and Jupyter notebooks
+├── backend/                        # FastAPI server and Model Inference scripts
+│   ├── main.py                     # API Entry point
+│   ├── prithvi_inference.py        # Prithvi geospatial logic
+│   └── wildfire_spread_inference.py# ResGNN-UNet spread modeling
+├── frontend/                       # React 19 Client application
+├── prithvi-pytorch/                # Prithvi model architecture source
+├── Water_Body_Segmentation/        # Aquatic monitoring notebooks
+└── Wildfire-Prediction-from-Satellite-Imagery/ # Risk prediction notebooks
 ```
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are very welcome! Feel free to check the issues page.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## 📝 License
 
