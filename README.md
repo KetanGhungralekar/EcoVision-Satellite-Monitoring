@@ -16,7 +16,7 @@
 
 ## Key Features
 
-EcoVision AI is currently specialized in a high-precision **Three-Stage Wildfire Analysis Pipeline** and aquatic monitoring:
+EcoVision AI is currently specialized in a high-precision **Three-Stage Wildfire Analysis Pipeline**:
 
 ### 🔥 The Three-Stage Wildfire Pipeline
 1.  **Wildfire Risk Prediction (Risk Assessment)**  
@@ -28,10 +28,6 @@ EcoVision AI is currently specialized in a high-precision **Three-Stage Wildfire
 3.  **Burned Area (Burn Scar) Segmentation**  
     Utilizes the **Prithvi-100M Foundation Model** on 6-band Sentinel-2 / HLS GeoTIFFs to precisely map post-fire damage areas and outline burn scars for recovery analysis.
 
-### 💧 Aquatic Monitoring
-- **Water Body Segmentation**  
-  Automated semantic segmentation designed to map, track, and monitor vital water resources and shifting boundaries.
-
 ## Tech Stack
 
 - **Frontend:** React 19, Vite, Vanilla CSS, Lucide Icons.
@@ -40,6 +36,7 @@ EcoVision AI is currently specialized in a high-precision **Three-Stage Wildfire
     - **Prithvi-100M:** NASA/IBM Geospatial Foundation Model.
     - **Hybrid ResGNN-UNet:** Graph-based spatial-temporal modeling.
     - **VGG-16 / Custom CNN:** Deep learning for risk classification.
+
 
 ## Getting Started
 
@@ -78,7 +75,6 @@ EcoVision-Satellite-Monitoring/
 │   └── wildfire_spread_inference.py# ResGNN-UNet spread modeling
 ├── frontend/                       # React 19 Client application
 ├── prithvi-pytorch/                # Prithvi model architecture source
-├── Water_Body_Segmentation/        # Aquatic monitoring notebooks
 └── Wildfire-Prediction-from-Satellite-Imagery/ # Risk prediction notebooks
 ```
 
